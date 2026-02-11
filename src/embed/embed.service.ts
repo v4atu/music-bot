@@ -47,19 +47,57 @@ export class EmbedService {
       currentPlusQueue.unshift(queue.current);
     }
 
+    const totalDuration = currentPlusQueue.reduce(
+      (acc, track) => acc + (track.info.duration || 0),
+      0,
+    );
+
     const newEmbed = new EmbedBuilder()
       .setColor('#0099ff')
-      .setTitle('Tracks queue')
-      .setDescription(
-        currentPlusQueue
-          .map((track, index) =>
-            index == 0
-              ? `▶️ ${this.shortenTrackTitle(track.info.title)}`
-              : `${index + 1}. ${this.shortenTrackTitle(track.info.title)}`,
-          )
-          .join('\n'),
-      )
-      .setFooter({ text: `Queue size: ${queue.tracks.length} songs.` });
+      .setTitle('🎵 Music Queue')
+      .setThumbnail(queue.current?.info.artworkUrl || null);
+
+    if (queue.current) {
+      newEmbed.addFields({
+        name: '▶️ Now Playing',
+        value:
+          `**${this.shortenTrackTitle(queue.current.info.title)}**\n` +
+          `👤 ${queue.current.info.author} | ⏱️ ${this.calculateTime(queue.current.info.duration)}\n` +
+          `📢 Requested by: ${queue.current.requester}`,
+        inline: false,
+      });
+    }
+
+    if (queue.tracks.length > 0) {
+      const upcomingTracks = Array.from(queue.tracks)
+        .slice(0, 10)
+        .map(
+          (track, index) =>
+            `**${index + 1}.** ${this.shortenTrackTitle(track.info.title)}\n` +
+            `   👤 ${track.info.author} | ⏱️ ${this.calculateTime(track.info.duration || 0)}`,
+        )
+        .join('\n\n');
+
+      newEmbed.addFields({
+        name: '📋 Up Next',
+        value: upcomingTracks,
+        inline: false,
+      });
+
+      if (queue.tracks.length > 10) {
+        newEmbed.addFields({
+          name: '➕ More tracks',
+          value: `... and ${queue.tracks.length - 10} more songs`,
+          inline: false,
+        });
+      }
+    }
+
+    newEmbed
+      .setFooter({
+        text: `${currentPlusQueue.length} songs in queue | Total duration: ${this.calculateTime(totalDuration)}`,
+      })
+      .setTimestamp();
 
     return newEmbed;
   }

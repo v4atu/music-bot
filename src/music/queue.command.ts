@@ -20,6 +20,7 @@ export class QueueCommand {
 
     interaction.reply({
       embeds: [this.embedService.createQueueEmbed(player.queue)],
+      flags: 'Ephemeral',
     });
   }
 }

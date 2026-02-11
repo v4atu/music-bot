@@ -3,12 +3,14 @@ import { Context, Options, SlashCommand } from 'necord';
 import type { SlashCommandContext } from 'necord';
 import { PlayDto } from './dtos/play.dto';
 import { NecordLavalinkService, PlayerManagerService } from '@necord/lavalink';
+import { EmbedService } from 'src/embed/embed.service';
 
 @Injectable()
 export class PlayCommand {
   public constructor(
     private readonly playerManager: PlayerManagerService,
     private readonly lavalinkService: NecordLavalinkService,
+    private readonly embedService: EmbedService,
   ) {}
 
   @SlashCommand({
@@ -41,8 +43,11 @@ export class PlayCommand {
     if (!player.playing) await player.play();
 
     return interaction.reply({
-      content: `Added '${res.tracks[0].info.title}' to the queue`,
-      flags: 'Ephemeral',
+      embeds: [
+        this.embedService.createSimpleEmbed(
+          `✅ Added '${res.tracks[0].info.title}' to the queue`,
+        ),
+      ],
     });
   }
 }
