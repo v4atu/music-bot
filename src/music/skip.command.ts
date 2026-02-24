@@ -20,13 +20,19 @@ export class SkipCommand {
     @Context() [interaction]: SlashCommandContext,
     @Options() { songs }: SkipDto,
   ) {
-    const player = this.playerManager.get(interaction.guildId!);
-    player.skip(songs ?? 1);
+    try {
+      const player = this.playerManager.get(interaction.guildId!);
+      player.skip(songs ?? 1);
 
-    interaction.reply({
-      embeds: [
-        this.embedService.createSimpleEmbed(`Skipped ${songs ?? 1} song(s).`),
-      ],
-    });
+      interaction.reply({
+        embeds: [
+          this.embedService.createSimpleEmbed(`Skipped ${songs ?? 1} song(s).`),
+        ],
+      });
+    } catch (error) {
+      interaction.reply({
+        embeds: [this.embedService.createInternalErrorEmbed()],
+      });
+    }
   }
 }

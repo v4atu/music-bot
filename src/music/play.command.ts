@@ -21,33 +21,39 @@ export class PlayCommand {
     @Context() [interaction]: SlashCommandContext,
     @Options() { query }: PlayDto,
   ) {
-    const player =
-      this.playerManager.get(interaction.guildId!) ??
-      this.playerManager.create({
-        ...this.lavalinkService.extractInfoForPlayer(interaction),
-        selfDeaf: true,
-        selfMute: false,
+    try {
+      const player =
+        this.playerManager.get(interaction.guildId!) ??
+        this.playerManager.create({
+          ...this.lavalinkService.extractInfoForPlayer(interaction),
+          selfDeaf: true,
+          selfMute: false,
+        });
+
+      await player.connect();
+
+      const res = await player.search(
+        {
+          query,
+          source: 'youtube',
+        },
+        interaction.user,
+      );
+
+      await player.queue.add(res.tracks[0]);
+      if (!player.playing) await player.play();
+
+      return interaction.reply({
+        embeds: [
+          this.embedService.createSimpleEmbed(
+            `✅ Added '${res.tracks[0].info.title}' to the queue`,
+          ),
+        ],
       });
-
-    await player.connect();
-
-    const res = await player.search(
-      {
-        query,
-        source: 'youtube',
-      },
-      interaction.user,
-    );
-
-    await player.queue.add(res.tracks[0]);
-    if (!player.playing) await player.play();
-
-    return interaction.reply({
-      embeds: [
-        this.embedService.createSimpleEmbed(
-          `✅ Added '${res.tracks[0].info.title}' to the queue`,
-        ),
-      ],
-    });
+    } catch (error) {
+      interaction.reply({
+        embeds: [this.embedService.createInternalErrorEmbed()],
+      });
+    }
   }
 }

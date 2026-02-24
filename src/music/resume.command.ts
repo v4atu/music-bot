@@ -16,13 +16,19 @@ export class ResumeCommand {
     description: 'Resumes the current track.',
   })
   public async onResume(@Context() [interaction]: SlashCommandContext) {
-    const player = this.playerManager.get(interaction.guildId!);
-    player.resume();
+    try {
+      const player = this.playerManager.get(interaction.guildId!);
+      player.resume();
 
-    interaction.reply({
-      embeds: [
-        this.embedService.createSimpleEmbed('Resumed the current track.'),
-      ],
-    });
+      interaction.reply({
+        embeds: [
+          this.embedService.createSimpleEmbed('Resumed the current track.'),
+        ],
+      });
+    } catch (error) {
+      interaction.reply({
+        embeds: [this.embedService.createInternalErrorEmbed()],
+      });
+    }
   }
 }

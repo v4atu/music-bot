@@ -17,51 +17,71 @@ export class MessageService {
   public onTrackStart(
     @Context() [player, track]: LavalinkManagerContextOf<'trackStart'>,
   ) {
-    if (!track) return;
+    try {
+      if (!track) return;
 
-    this.client.channels.fetch(player.textChannelId!).then((channel) => {
-      if (!channel || !channel.isTextBased() || !channel.isSendable()) return;
+      this.client.channels.fetch(player.textChannelId!).then((channel) => {
+        if (!channel || !channel.isTextBased() || !channel.isSendable()) return;
 
-      const songEmbed = this.embedService.createSongEmbed(track);
-      channel.send({ embeds: [songEmbed] });
-    });
-    this.logger.log(`Track started at ${player.guildId} by ${track.requester}`);
+        const songEmbed = this.embedService.createSongEmbed(track);
+        channel.send({ embeds: [songEmbed] });
+      });
+      this.logger.log(
+        `Track started at ${player.guildId} by ${track.requester}`,
+      );
+    } catch (error) {
+      this.logger.log(
+        `Error at displaying track start message at ${player.guildId}`,
+      );
+    }
   }
 
   @OnLavalinkManager('trackError')
   public onTrackError(
     @Context() [player, track, payload]: LavalinkManagerContextOf<'trackError'>,
   ) {
-    if (!track) return;
+    try {
+      if (!track) return;
 
-    this.client.channels.fetch(player.textChannelId!).then((channel) => {
-      if (!channel || !channel.isTextBased() || !channel.isSendable()) return;
+      this.client.channels.fetch(player.textChannelId!).then((channel) => {
+        if (!channel || !channel.isTextBased() || !channel.isSendable()) return;
 
-      const songEmbed = this.embedService.createUserErrorEmbed(
-        'An error occurred while playing the track.',
+        const songEmbed = this.embedService.createUserErrorEmbed(
+          'An error occurred while playing the track.',
+        );
+        channel.send({ embeds: [songEmbed] });
+      });
+      this.logger.log('-------------------------------');
+      this.logger.log('----------Track error----------');
+      this.logger.log('-------------------------------');
+      this.logger.error(payload.error);
+      this.logger.log('-------------------------------');
+    } catch (error) {
+      this.logger.log(
+        `Error at displaying track error message at ${player.guildId}`,
       );
-      channel.send({ embeds: [songEmbed] });
-    });
-    this.logger.log('-------------------------------');
-    this.logger.log('----------Track error----------');
-    this.logger.log('-------------------------------');
-    this.logger.error(payload.error);
-    this.logger.log('-------------------------------');
+    }
   }
 
   @OnLavalinkManager('queueEnd')
   public onQueueEnd(
     @Context() [player, track]: LavalinkManagerContextOf<'queueEnd'>,
   ) {
-    if (!track) return;
+    try {
+      if (!track) return;
 
-    this.client.channels.fetch(player.textChannelId!).then((channel) => {
-      if (!channel || !channel.isTextBased() || !channel.isSendable()) return;
+      this.client.channels.fetch(player.textChannelId!).then((channel) => {
+        if (!channel || !channel.isTextBased() || !channel.isSendable()) return;
 
-      const songEmbed = this.embedService.createSimpleEmbed(
-        'The queue has ended. Thanks for listening!',
+        const songEmbed = this.embedService.createSimpleEmbed(
+          'The queue has ended. Thanks for listening!',
+        );
+        channel.send({ embeds: [songEmbed] });
+      });
+    } catch (error) {
+      this.logger.log(
+        `Error at displaying queue end message at ${player.guildId}`,
       );
-      channel.send({ embeds: [songEmbed] });
-    });
+    }
   }
 }

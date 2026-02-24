@@ -16,11 +16,17 @@ export class QueueCommand {
     description: 'Shows the current queue.',
   })
   public async onQueue(@Context() [interaction]: SlashCommandContext) {
-    const player = this.playerManager.get(interaction.guildId!);
+    try {
+      const player = this.playerManager.get(interaction.guildId!);
 
-    interaction.reply({
-      embeds: [this.embedService.createQueueEmbed(player.queue)],
-      flags: 'Ephemeral',
-    });
+      interaction.reply({
+        embeds: [this.embedService.createQueueEmbed(player.queue)],
+        flags: 'Ephemeral',
+      });
+    } catch (error) {
+      interaction.reply({
+        embeds: [this.embedService.createInternalErrorEmbed()],
+      });
+    }
   }
 }

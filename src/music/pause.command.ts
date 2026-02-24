@@ -16,13 +16,19 @@ export class PauseCommand {
     description: 'Pauses the current track.',
   })
   public async onPause(@Context() [interaction]: SlashCommandContext) {
-    const player = this.playerManager.get(interaction.guildId!);
+    try {
+      const player = this.playerManager.get(interaction.guildId!);
 
-    player.pause();
-    interaction.reply({
-      embeds: [
-        this.embedService.createSimpleEmbed(`Paused the current track.`),
-      ],
-    });
+      player.pause();
+      interaction.reply({
+        embeds: [
+          this.embedService.createSimpleEmbed(`Paused the current track.`),
+        ],
+      });
+    } catch (error) {
+      interaction.reply({
+        embeds: [this.embedService.createInternalErrorEmbed()],
+      });
+    }
   }
 }

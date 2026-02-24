@@ -16,11 +16,17 @@ export class ClearCommand {
     description: 'Clears the current queue.',
   })
   public async onClear(@Context() [interaction]: SlashCommandContext) {
-    const player = this.playerManager.get(interaction.guildId!);
-    player.stopPlaying();
+    try {
+      const player = this.playerManager.get(interaction.guildId!);
+      player.stopPlaying();
 
-    await interaction.reply({
-      embeds: [this.embedService.createSimpleEmbed('Queue Cleared')],
-    });
+      await interaction.reply({
+        embeds: [this.embedService.createSimpleEmbed('Queue Cleared')],
+      });
+    } catch (error) {
+      interaction.reply({
+        embeds: [this.embedService.createInternalErrorEmbed()],
+      });
+    }
   }
 }
