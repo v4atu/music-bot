@@ -1,11 +1,14 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { Context, SlashCommand } from 'necord';
 import type { SlashCommandContext } from 'necord';
 import { PlayerManagerService } from '@necord/lavalink';
 import { EmbedService } from 'src/embed/embed.service';
+import { UserFacingError } from './errors/music-bot.errors';
 
 @Injectable()
 export class ResumeCommand {
+  private readonly logger = new Logger(ResumeCommand.name);
+
   public constructor(
     private readonly playerManager: PlayerManagerService,
     private readonly embedService: EmbedService,
@@ -18,15 +21,27 @@ export class ResumeCommand {
   public async onResume(@Context() [interaction]: SlashCommandContext) {
     try {
       const player = this.playerManager.get(interaction.guildId!);
-      player.resume();
 
-      interaction.reply({
-        embeds: [
-          this.embedService.createSimpleEmbed('Resumed the current track.'),
-        ],
+      if (!player) {
+        throw new UserFacingError('No hay música reproduciéndose en este servidor.');
+      }
+      if (!player.paused) {
+        throw new UserFacingError('El reproductor no está en pausa.');
+      }
+
+      player.resume();
+      return interaction.reply({
+        embeds: [this.embedService.createSimpleEmbed('Resumed the current track.')],
       });
     } catch (error) {
-      interaction.reply({
+      if (error instanceof UserFacingError) {
+        this.logger.warn(`[ResumeCommand] ${error.message}`);
+        return interaction.reply({
+          embeds: [this.embedService.createUserErrorEmbed(error.message)],
+        });
+      }
+      this.logger.error('[ResumeCommand] Unexpected error', error instanceof Error ? error.stack : String(error));
+      return interaction.reply({
         embeds: [this.embedService.createInternalErrorEmbed()],
       });
     }

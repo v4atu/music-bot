@@ -1,12 +1,15 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { Context, Options, SlashCommand } from 'necord';
 import type { SlashCommandContext } from 'necord';
 import { PlayerManagerService } from '@necord/lavalink';
 import { EmbedService } from 'src/embed/embed.service';
 import { SkipDto } from './dtos/skip.dto';
+import { UserFacingError } from './errors/music-bot.errors';
 
 @Injectable()
 export class SkipCommand {
+  private readonly logger = new Logger(SkipCommand.name);
+
   public constructor(
     private readonly playerManager: PlayerManagerService,
     private readonly embedService: EmbedService,
@@ -22,15 +25,33 @@ export class SkipCommand {
   ) {
     try {
       const player = this.playerManager.get(interaction.guildId!);
-      player.skip(songs ?? 1);
+      const skipCount = songs ?? 1;
 
-      interaction.reply({
-        embeds: [
-          this.embedService.createSimpleEmbed(`Skipped ${songs ?? 1} song(s).`),
-        ],
+      if (!player) {
+        throw new UserFacingError('No hay música reproduciéndose en este servidor.');
+      }
+      if (!player.queue.current && player.queue.tracks.length === 0) {
+        throw new UserFacingError('La cola está vacía — no hay nada que saltarse.');
+      }
+      if (skipCount > player.queue.tracks.length) {
+        throw new UserFacingError(
+          `No se pueden saltar ${skipCount} canciones — la cola solo tiene ${player.queue.tracks.length} canción(es) pendiente(s).`,
+        );
+      }
+
+      player.skip(skipCount);
+      return interaction.reply({
+        embeds: [this.embedService.createSimpleEmbed(`Skipped ${skipCount} song(s).`)],
       });
     } catch (error) {
-      interaction.reply({
+      if (error instanceof UserFacingError) {
+        this.logger.warn(`[SkipCommand] ${error.message}`);
+        return interaction.reply({
+          embeds: [this.embedService.createUserErrorEmbed(error.message)],
+        });
+      }
+      this.logger.error('[SkipCommand] Unexpected error', error instanceof Error ? error.stack : String(error));
+      return interaction.reply({
         embeds: [this.embedService.createInternalErrorEmbed()],
       });
     }
