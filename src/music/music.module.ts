@@ -6,6 +6,7 @@ import { SkipCommand } from './skip.command';
 import { ClearCommand } from './clear.command';
 import { ResumeCommand } from './resume.command';
 import { EmbedModule } from 'src/embed/embed.module';
+import { LoopCommand } from './loop.command';
 
 @Module({
   imports: [EmbedModule],
@@ -16,6 +17,7 @@ import { EmbedModule } from 'src/embed/embed.module';
     QueueCommand,
     SkipCommand,
     ClearCommand,
+    LoopCommand,
   ],
 })
 export class MusicModule {}

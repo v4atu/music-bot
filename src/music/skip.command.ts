@@ -27,13 +27,26 @@ export class SkipCommand {
       const player = this.playerManager.get(interaction.guildId!);
       const skipCount = songs ?? 1;
 
+      if (skipCount <= 0) {
+        throw new UserFacingError('No se puede saltar un numero 0 o negativo de canciones.');
+      }
+
       if (!player) {
         throw new UserFacingError('No hay música reproduciéndose en este servidor.');
       }
+
       if (!player.queue.current && player.queue.tracks.length === 0) {
         throw new UserFacingError('La cola está vacía — no hay nada que saltarse.');
       }
-      if (skipCount > player.queue.tracks.length) {
+
+      if (skipCount == 1 && player.queue.tracks.length == 0) {
+        player.stopPlaying();
+        return interaction.reply({
+          embeds: [this.embedService.createSimpleEmbed(`Skipped 1 song(s).`)],
+        });
+      }
+
+      else if (skipCount > player.queue.tracks.length) {
         throw new UserFacingError(
           `No se pueden saltar ${skipCount} canciones — la cola solo tiene ${player.queue.tracks.length} canción(es) pendiente(s).`,
         );
