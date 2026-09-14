@@ -1,98 +1,122 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# Music Bot
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+A Discord music bot built with NestJS, [necord](https://necord.ljtech.dev), and [lavalink-client](https://www.npmjs.com/package/lavalink-client) for playing YouTube audio in voice channels. Designed to run on a **single Discord server** — either on a remote VPS or a local homelab.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+Un bot de musica para Discord construido con NestJS, [necord](https://necord.ljtech.dev) y [lavalink-client](https://www.npmjs.com/package/lavalink-client) para reproducir audio de YouTube en canales de voz. disenado para funcionar en **un solo servidor de Discord** — ya sea en un VPS remoto o un homelab local.
 
-## Description
+---
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## Scope / Alcance
 
-## Project setup
+> **This bot was built to serve one Discord server.** It was not designed or tested for multi-guild deployments. If you need a bot that works across many servers, this is not the right project.
 
-```bash
-$ pnpm install
-```
+> **Este bot fue construido para servir un solo servidor de Discord.** No fue disenado ni probado para despliegues multi-guild. Si necesitas un bot que funcione en multiples servidores, este no es el proyecto indicado.
 
-## Compile and run the project
+---
 
-```bash
-# development
-$ pnpm run start
+## Deployment / Despliegue
 
-# watch mode
-$ pnpm run start:dev
+### Remote VPS
 
-# production mode
-$ pnpm run start:prod
-```
+If you deploy on a remote VPS, you **must** read the [Lavalink](https://github.com/lavalink-devs/Lavalink) and [Lavaplayer](https://github.com/lavalink-devs/lavaplayer) documentation carefully. YouTube actively blocks datacenter IPs, and without proper configuration (e.g. using a proxy or correct source setup) your bot **will** get blocked.
 
-## Run tests
+Si despliegas en un VPS remoto, **debes** leer la documentacion de [Lavalink](https://github.com/lavalink-devs/Lavalink) y [Lavaplayer](https://github.com/lavalink-devs/lavaplayer) detenidamente. YouTube bloquea activamente IPs de centros de datos, y sin una configuracion adecuada (por ejemplo, usando un proxy o configuracion correcta de fuentes) tu bot **sera** bloqueado.
 
-```bash
-# unit tests
-$ pnpm run test
+### Local Homelab
 
-# e2e tests
-$ pnpm run test:e2e
+If you run the bot from a home network, you should not face YouTube IP blocks. Residential IPs are not targeted by YouTube's rate limiting. You can run Lavalink and the bot without worrying about getting blocked.
 
-# test coverage
-$ pnpm run test:cov
-```
+Si ejecutas el bot desde una red doméstica, no deberías enfrentar bloqueos de IP por parte de YouTube. Las IPs residenciales no son objetivo del rate limiting de YouTube. Puedes ejecutar Lavalink y el bot sin preocuparte por ser bloqueado.
 
-## Deployment
+---
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
+## Prerequisites / Requisitos
 
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+- [Node.js](https://nodejs.org/) >= 20
+- [pnpm](https://pnpm.io/) (via corepack)
+
+
+- A running [Lavalink](https://github.com/lavalink-devs/Lavalink) server
+- A Discord bot token with the `bot` scope and permissions to connect to voice channels
+
+- Un servidor [Lavalink](https://github.com/lavalink-devs/Lavalink) en ejecucion
+- Un token de bot de Discord con el scope `bot` y permisos para conectarse a canales de voz
+
+---
+
+## Setup / Configuracion
+
+1. Clone the repository / Clona el repositorio:
 
 ```bash
-$ pnpm add -g @nestjs/mau
-$ mau deploy
+git clone https://github.com/<your-user>/music-bot.git
+cd music-bot
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+2. Install dependencies / Instala las dependencias:
 
-## Resources
+```bash
+pnpm install
+```
 
-Check out a few resources that may come in handy when working with NestJS:
+3. Create your `.env` file from the example / Crea tu archivo `.env` a partir del ejemplo:
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+```bash
+cp .env.example .env
+```
 
-## Support
+4. Fill in the required environment variables / Completa las variables de entorno requeridas:
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+| Variable | Description |
+|---|---|
+| `DISCORD_TOKEN` | Your Discord bot token |
+| `DISCORD_DEVELOPMENT_GUILD_ID` | Guild ID where slash commands are registered instantly during development (optional in production) |
+| `LAVALINK_PASSWORD` | Password for your Lavalink server |
+| `LAVALINK_HOST` | Host of your Lavalink server (e.g. `localhost`) |
+| `LAVALINK_PORT` | Port of your Lavalink server (e.g. `2333`) |
 
-## Stay in touch
+---
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+## Run / Ejecutar
+
+```bash
+# Development with hot-reload / Desarrollo con hot-reload
+pnpm run start:dev
+
+# Production / Produccion
+pnpm run build
+pnpm run start:prod
+```
+
+---
+
+## Slash Commands / Comandos
+
+| Command | Description |
+|---|---|
+| `/play <query>` | Play a song by name or URL from YouTube |
+| `/pause` | Pause the current track |
+| `/resume` | Resume the current track |
+| `/skip [songs]` | Skip the current track (optionally skip N tracks) |
+| `/clear` | Clear the queue and stop playback |
+| `/loop` | Toggle loop on the current track |
+| `/queue` | Show the current queue (ephemeral) |
+| `/ping` | Check bot latency |
+
+---
+
+## Tech Stack
+
+- [NestJS](https://nestjs.com/) — Node.js framework
+- [necord](https://necord.ljtech.dev) — Discord.js wrapper for Necord
+- [@necord/lavalink](https://www.npmjs.com/package/@necord/lavalink) — Lavalink integration
+- [lavalink-client](https://www.npmjs.com/package/lavalink-client) — Lavalink client
+- [discord.js](https://discord.js.org/) — Discord API library
+- [TypeScript](https://www.typescriptlang.org/)
+- [Lavalink](https://github.com/lavalink-devs/Lavalink) + [Lavaplayer](https://github.com/lavalink-devs/lavaplayer) — Audio playback server
+
+---
 
 ## License
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+This project is private and unlicensed.
