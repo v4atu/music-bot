@@ -20,12 +20,20 @@ export class MessageService {
     try {
       if (!track) return;
 
-      this.client.channels.fetch(player.textChannelId!).then((channel) => {
-        if (!channel || !channel.isTextBased() || !channel.isSendable()) return;
+      this.client.channels
+        .fetch(player.textChannelId!)
+        .then((channel) => {
+          if (!channel || !channel.isTextBased() || !channel.isSendable())
+            return;
 
-        const songEmbed = this.embedService.createSongEmbed(track);
-        channel.send({ embeds: [songEmbed] });
-      });
+          const songEmbed = this.embedService.createSongEmbed(track);
+          channel.send({ embeds: [songEmbed] });
+        })
+        .catch(() => {
+          this.logger.log(
+            `Error at displaying track start message at ${player.guildId}`,
+          );
+        });
       this.logger.log(
         `Track started at ${player.guildId} by ${track.requester}`,
       );
@@ -43,14 +51,22 @@ export class MessageService {
     try {
       if (!track) return;
 
-      this.client.channels.fetch(player.textChannelId!).then((channel) => {
-        if (!channel || !channel.isTextBased() || !channel.isSendable()) return;
+      this.client.channels
+        .fetch(player.textChannelId!)
+        .then((channel) => {
+          if (!channel || !channel.isTextBased() || !channel.isSendable())
+            return;
 
-        const songEmbed = this.embedService.createUserErrorEmbed(
-          'An error occurred while playing the track.',
-        );
-        channel.send({ embeds: [songEmbed] });
-      });
+          const songEmbed = this.embedService.createUserErrorEmbed(
+            'An error occurred while playing the track.',
+          );
+          channel.send({ embeds: [songEmbed] });
+        })
+        .catch(() => {
+          this.logger.log(
+            `Error at displaying track error message at ${player.guildId}`,
+          );
+        });
       this.logger.log('-------------------------------');
       this.logger.log('----------Track error----------');
       this.logger.log('-------------------------------');
@@ -70,14 +86,22 @@ export class MessageService {
     try {
       if (!track) return;
 
-      this.client.channels.fetch(player.textChannelId!).then((channel) => {
-        if (!channel || !channel.isTextBased() || !channel.isSendable()) return;
+      this.client.channels
+        .fetch(player.textChannelId!)
+        .then((channel) => {
+          if (!channel || !channel.isTextBased() || !channel.isSendable())
+            return;
 
-        const songEmbed = this.embedService.createSimpleEmbed(
-          'The queue has ended. Thanks for listening!',
-        );
-        channel.send({ embeds: [songEmbed] });
-      });
+          const songEmbed = this.embedService.createSimpleEmbed(
+            'The queue has ended. Thanks for listening!',
+          );
+          channel.send({ embeds: [songEmbed] });
+        })
+        .catch(() => {
+          this.logger.log(
+            `Error at displaying queue end message at ${player.guildId}`,
+          );
+        });
     } catch (error) {
       this.logger.log(
         `Error at displaying queue end message at ${player.guildId}`,
